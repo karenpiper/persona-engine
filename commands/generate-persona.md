@@ -8,28 +8,50 @@ Generate one or more rich customer/audience personas using the persona-generatio
 
 ## Process
 
-1. **Assess the input**
-   - If $ARGUMENTS includes file references (e.g., `@brief.pdf`, `@notes.md`), read those files first
-   - If $ARGUMENTS is free-form text, treat it as a direct description of the target audience
-   - If no arguments are provided, ask the user: "What should I use to generate the persona? You can paste a description, share a brief, or upload research notes."
+### Step 1: Assess the input
 
-2. **Check input richness**
-   - If input is rich (research notes, brief, transcripts, agent findings): invoke the `persona-researcher` agent to synthesize the material into structured audience insights before generating
-   - If input is thin (a few sentences, a rough brief): proceed directly but flag assumptions clearly in the output
+- If $ARGUMENTS includes file references (e.g., `@brief.pdf`, `@notes.md`), read those files
+- If $ARGUMENTS is a free-form description of a target audience, treat it as a starting point
+- If no arguments are provided, ask: "What audience should I build personas for? You can describe them, upload documents, or give me a segment name or role — and I'll research the rest."
 
-3. **Ask clarifying questions if needed**
-   - If the input is ambiguous about the number of personas wanted, ask: "How many personas should I generate from this input?"
-   - If multiple audience segments are evident in the input, name them and ask which to prioritize or confirm all should be built
+### Step 2: Determine research mode
 
-4. **Generate the persona(s)**
-   - Apply the full persona template from the persona-generation skill
-   - Meet all quality checklist criteria before finalizing
-   - Each persona must have: name, archetype label, snapshot, psychographics, behaviors, motivations, pain points, relationship to category, what resonates, what doesn't, direct voice sample
+**Rich input (multiple documents, transcripts, research reports, agent findings)**
+→ Invoke `persona-researcher` in synthesis mode to extract and organize signals from the provided materials before generating.
 
-5. **Save the output**
-   - Save each persona as a Markdown file named `[archetype-kebab-case].md` in the current workspace folder
-   - Present the persona inline in the conversation as well
-   - If multiple personas were generated, also create a `persona-set-overview.md` that summarizes the full set and highlights key contrasts between them
+**Thin input (a sentence or two, a job title, a segment name, or nothing)**
+→ Invoke `persona-researcher` in research mode. The agent will conduct active web research across Reddit, LinkedIn, professional forums, analyst reports, product reviews, job postings, trade publications, and analogous audiences to build a grounded audience picture from scratch. This typically takes a few minutes — let the user know research is underway.
 
-6. **Close with strategic framing**
-   - Briefly note what this persona set is well-suited to (brief writing, messaging development, campaign planning) and any gaps that additional research could fill
+**Mixed input (some documents + gaps)**
+→ Invoke `persona-researcher` to synthesize what exists, then extend with targeted web research to fill the gaps identified. Flag which signals came from documents vs. research.
+
+Always invoke `persona-researcher` first. Do not generate personas directly from thin or unprocessed input.
+
+### Step 3: Clarify before generating
+
+After the researcher returns its synthesis, check:
+- Is the number of personas to generate clear? If not, ask.
+- Do multiple distinct segments emerge from the research? Name them and confirm which to build.
+- Is there a specific segment framework or naming convention to follow?
+
+### Step 4: Generate the persona(s)
+
+Apply the full two-part persona template:
+- **Part 1** (Standard Persona): Name, Archetype, Demographics, Psychographics, Lifestyle & Interests, Motivations & Decision Criteria, Direct Voice Sample, Segment Context, Within-Segment Variation, Source Notes
+- **Part 2** (AI Simulation Extension): Operational Context, Decision-Making Framework, Core Beliefs, Frictions, Activation Triggers, Simulation Guardrails
+
+Meet all quality checklist criteria. Each persona must be grounded in evidence from the researcher's synthesis — label any inferences clearly.
+
+### Step 5: Save the output
+
+- Save each persona as `[archetype-kebab-case].md` in the workspace folder
+- Present inline in the conversation
+- For multiple personas, also create `persona-set-overview.md` summarizing the set and highlighting contrasts
+
+### Step 6: Close with context
+
+Briefly note:
+- What sources informed the personas (documents, research, or both)
+- Confidence level in the output (strongly evidenced vs. inferred in places)
+- What additional research or input would sharpen them
+- What the persona set is best suited for next (brief, messaging, campaign, persona-chat)
