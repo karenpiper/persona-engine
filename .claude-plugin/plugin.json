@@ -1,0 +1,9 @@
+{
+  "name": "persona-engine",
+  "version": "0.1.0",
+  "description": "Generate, manage, and converse with rich customer/audience personas that flow through the full strategy workflow — briefs, campaigns, and content.",
+  "author": {
+    "name": "KP / Code and Theory"
+  },
+  "keywords": ["personas", "strategy", "audience", "research", "brief", "campaign"]
+}
