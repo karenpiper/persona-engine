@@ -13,6 +13,7 @@ Designed to work alongside an existing strategy engine suite.
 - **Exports** persona insights formatted for briefs, campaigns, and messaging frameworks
 - **Audits** existing personas for quality and strategic utility
 - **Embodies** personas in live conversation — so you can share creative or test hypotheses directly with your audience
+- **Runs creative testing panels** — puts creative work, messaging, campaigns, or strategy through a structured 3-round persona courtroom with synthesis after each round
 
 ---
 
@@ -32,12 +33,15 @@ Designed to work alongside an existing strategy engine suite.
 | `/persona-messaging` | Generate a tailored messaging framework for a persona |
 | `/persona-to-campaign` | Export persona insights for campaign planning and targeting |
 | `/persona-chat` | Start a live conversation with a persona |
+| `/persona-courtroom` | Run creative, messaging, or strategy input through a 3-round persona feedback panel with synthesis |
 
 ### Agents
 
 **`persona-researcher`** — Synthesizes rich or complex input materials (transcripts, reports, multiple docs) into structured audience insights before persona generation. Invoked automatically when input is multi-source or research-heavy.
 
 **`persona-voice`** — Fully embodies a persona for live conversation. Activated by `/persona-chat`. Responds to creative work, strategy hypotheses, messaging drafts, and direct questions in the persona's authentic voice and perspective.
+
+**`persona-evaluator`** — Structured evaluation agent used by `/persona-courtroom`. Embodies a persona to evaluate input against a specific question set, producing section-by-section feedback designed for panel comparison and synthesis. Not invoked directly.
 
 ---
 
@@ -83,7 +87,8 @@ Typical workflow integration:
 2. **Brief phase** — Run `/persona-to-brief` → drop audience section directly into your brief
 3. **Messaging phase** — Run `/persona-messaging` → get a messaging framework per persona
 4. **Campaign phase** — Run `/persona-to-campaign` → get audience inputs for media and creative planning
-5. **Creative review** — Run `/persona-chat` → pressure-test creative concepts with the persona directly
+5. **Creative testing** — Run `/persona-courtroom` → put creative, messaging, or strategy through a 3-round panel evaluation with synthesis after each round
+6. **Deep dive** — Run `/persona-chat` → have a live conversation with a single persona to explore a specific reaction further
 
 ---
 

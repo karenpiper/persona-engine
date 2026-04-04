@@ -105,6 +105,78 @@ For multi-persona sets, also create a `persona-set-overview.md` summarizing all 
 
 Always note what inputs drove the output and flag any assumptions made due to thin data.
 
+Also save a `[persona-name]-sources.md` for each persona documenting:
+- The source clusters used (Reddit, brand data, cultural commentary, etc.)
+- Key quotes or findings per cluster
+- Confidence levels per claim (HIGH / MEDIUM / LOW) and what primary research would resolve LOW confidence items
+
+## Strategy Site Integration
+
+When a strategy project site exists (`~/strategy-projects/{slug}/site/`), offer to populate the personas section after generating personas.
+
+### What to populate
+
+**Data files** (go in `site/src/data/personas/` — NOT in `outputs/`):
+- Copy `{persona-slug}.md` → `site/src/data/personas/{persona-slug}.md`
+- Copy `{persona-slug}-sources.md` → `site/src/data/personas/{persona-slug}-sources.md`
+
+**Individual persona pages** (one per persona):
+- Create `site/src/app/(strategy)/personas/{persona-slug}/page.tsx`
+- Import `PersonaPageClient` and `PersonaDef` from `@/components/PersonaPageClient`
+- Define the full `PersonaDef` object inline in the page file (see field reference below)
+- Export a default page component that renders `<PersonaPageClient persona={PERSONA} crumbLabel="{name}" />`
+
+**Persona Lab index** (`site/src/app/(strategy)/personas/page.tsx`):
+- Full-height two-column layout
+- One input fires all personas simultaneously via `/api/persona-chat`
+- Each column has a "Full profile →" link to the individual page
+- Session-only state (no persistence)
+
+**API route — persona chat** (`site/src/app/api/persona-chat/route.ts`):
+- POST handler takes `{ personaId, messages }`
+- System prompts are hardcoded per `personaId` — add a new entry for each persona
+- System prompt must encode: who they are, how they speak, what they do and don't do, what they care about, what they push back on
+- Returns a streaming plain-text response using `@anthropic-ai/sdk`
+
+**API route — persona sources** (`site/src/app/api/persona-source/[id]/route.ts`):
+- GET handler reads `{persona-slug}.md` and `{persona-slug}-sources.md` from `src/data/personas/`
+- Returns `{ files: [{ filename, content }] }`
+- Uses `path.join(process.cwd(), 'src', 'data', 'personas')` — NOT `../outputs/`
+
+**Nav update** (in `StrategyShell.tsx`):
+- Add `{ label: 'Personas', href: '/personas', step: N, children: [{label: name, href: /personas/slug}] }` to NAV
+- Add each child path to `PAGE_LABELS`
+
+### PersonaDef field reference
+
+Every individual persona page requires a fully populated `PersonaDef`. All fields must be completed — do not leave any undefined or empty:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | kebab-case slug — must match the `PERSONAS` key in `api/persona-chat/route.ts` and the filenames in `src/data/personas/` |
+| `name` | string | Full fictional name |
+| `archetype` | string | 3–5 word archetype label |
+| `colorHex` | string | Brand hex color for this persona |
+| `tags` | string[] | Segment tags (age, behavior, identity signals) |
+| `age` | string | Age range |
+| `lifeStage` | string | 2–3 sentences on life stage and current trajectory |
+| `location` | string | Geographic descriptor |
+| `household` | string | Household context |
+| `headlineQuote` | string | The single sentence that epitomizes their relationship with the category |
+| `headlineContext` | string | 1–2 sentences explaining why this quote is the right one |
+| `frequency` | string | Visit/purchase frequency |
+| `relationshipBasis` | string | What the relationship is built on |
+| `brandRelationshipPosture` | string | How they hold the brand; their posture as a customer |
+| `voiceSample` | string | 3–5 sentences in first person, in their voice |
+| `motivations` | string[] | 4–6 items — what drives them toward the brand |
+| `painPoints` | string[] | 4–6 items — what frustrates or creates friction |
+| `decidingFactors` | string[] | 3–5 items — what tips the decision |
+| `activationTriggers` | string[] | 4–6 items — what moves them toward action |
+| `disengagementSignals` | string[] | 4–5 items — what causes drift or exit |
+| `buyingJourney` | JourneyStep[] | 5 stages: Discovery, Decision, Order, Experience, Post-order — each with stage, description, touchpoints[] |
+| `confidence` | { high, medium, low: string[] } | Research confidence summary |
+| `researchCount` | number | Number of sources reviewed |
+
 ## Reference Files
 
 - `references/persona-template.md` — Full two-part persona template (standard + simulation extension)
