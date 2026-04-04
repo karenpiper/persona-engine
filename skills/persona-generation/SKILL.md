@@ -176,6 +176,35 @@ Every individual persona page requires a fully populated `PersonaDef`. All field
 | `buyingJourney` | JourneyStep[] | 5 stages: Discovery, Decision, Order, Experience, Post-order — each with stage, description, touchpoints[] |
 | `confidence` | { high, medium, low: string[] } | Research confidence summary |
 | `researchCount` | number | Number of sources reviewed |
+| `primaryResearch` | PrimaryResearchStatus | Primary research provenance flag — always required, even if `used: false` |
+
+### PrimaryResearchStatus type
+
+```typescript
+type PrimaryResearchRec = {
+  altitude: 'small' | 'medium' | 'large'
+  label: string        // e.g. "5–8 Identity Interviews"
+  effort: string       // e.g. "2–3 weeks · 1 researcher"
+  methods: string[]    // specific methods used
+  questionsAnswered: string[]  // what this research would resolve
+  output: string       // what you get at the end
+}
+
+type PrimaryResearchStatus = {
+  used: boolean
+  note: string         // 1–2 sentences explaining the provenance
+  recommendations: PrimaryResearchRec[]  // one per altitude: small, medium, large
+}
+```
+
+**Rules:**
+- `primaryResearch` is a required field — never omit it
+- If no primary research was conducted, set `used: false` and populate all three altitude recommendations
+- Small = 5–8 interviews, 2–3 weeks, 1 researcher
+- Medium = 8–12 participants, structured study with tasks/concept reaction, 6–8 weeks
+- Large = longitudinal panel, multi-method, dedicated team, 3–6 months
+- Each `questionsAnswered` entry should map to a specific low-confidence item in the `confidence.low` array
+- The flag renders inline in the persona hero and in the source drawer — clicking opens a 3-altitude modal with actionable research designs
 
 ## Reference Files
 
